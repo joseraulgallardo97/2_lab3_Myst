@@ -10,4 +10,4 @@ import Anclaje
 
 df = f_datosent(p0_archivo = 'archivo_tradeview_2.xlsx')
 
-test = Anclaje.pareto(tickers = df['Symbol'])
+test, df2 = Anclaje.pareto(tickers = df['Symbol'])
