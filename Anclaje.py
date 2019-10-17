@@ -42,8 +42,10 @@ def pareto(df):
     plt.grid()
     plt.show()
     
+    pd.set_option('display.float_format', lambda x: '%.3f' % x)
     df['PipSL'] = abs(df['openPrice']-df['S/L'])*10000
     df['PipTP'] = abs(df['openPrice']-df['T/P'])*10000
     
-    
     return fig
+
+    # Retorno de salidas en Diccionario INVESTIGAR
