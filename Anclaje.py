@@ -16,36 +16,35 @@ def pareto(df):
     """
     import numpy as np
     import pandas as pd
-    import matplotlib.pyplot as plt
-    from matplotlib.ticker import PercentFormatter
+    import plotly.graph_objs as go
+    from plotly.subplots import make_subplots
         
     # Construcción del DataFrame a utilizar para el pareto
     pareto = pd.DataFrame({'Percentage':(df['Symbol'].value_counts()/df['Symbol'].count())*100}) #% de participación
     pareto = pareto.sort_values(by='Percentage',ascending=False) #Sort de mayor a menor % para línea
     pareto['TransactionC'] = list(df['Symbol'].value_counts()) #Conteo de valores para gráfico de barras
-        
-    # Definicipón del gráfico
-    fig, ax = plt.subplots()
-    ax.bar(pareto.index, pareto['TransactionC'], color="g") # Barras del gráfico
-    ax2 = ax.twinx() # Tener dos valores distintos en los ejes y
-    ax2.plot(pareto.index, pareto['Percentage'].cumsum(), color="k", marker="o") #Graficando la línea
-    ax2.yaxis.set_major_formatter(PercentFormatter()) #Formato de porcentaje al eje de línea
-    ax.set_xlabel('Currency') #Título del xlabel
-    ax.set_ylabel('Count')
-    ax2.set_ylabel('Percentage')
-        
-    ax.tick_params(axis='y', colors='g') #Color del eje de las barras para relacionar los valores
-    ax2.tick_params(axis='y', colors='k') #Color del eje de las líneas para relacionar valores
-    plt.setp(ax.get_xticklabels(), rotation=40, horizontalalignment='right') #Rotando etiquetas para que sean vistas
-    plt.title('Proporción de las divisas')
-        
-    plt.grid()
-    plt.show()
     
+    # Construcción del gráfico
+    fig = make_subplots(specs=[[{'secondary_y': True}]])
+    fig.add_trace(go.Bar(x=pareto.index, y=pareto['TransactionC'],name='Conteo'),secondary_y=False)
+    fig.add_trace(go.Scatter(x=pareto.index, y=pareto['Percentage'].cumsum(), name='Porcentaje'),secondary_y=True)
+    
+    # Título del gráfico
+    fig.update_layout(title_text='Pareto de transacciones')
+    
+    # Set x-axis title
+    fig.update_xaxes(title_text='Divisas')
+    
+    # Set y-axes titles
+    fig.update_yaxes(title_text='<b>Conteo</b> de transacciones', secondary_y=False)
+    fig.update_yaxes(title_text='<b>Porcentaje total</b> de transaccinoes', secondary_y=True)
+    
+    fig.show()
+    
+    # Calculando Pips Stop Loss y Take Profit
     pd.set_option('display.float_format', lambda x: '%.3f' % x)
     df['PipSL'] = abs(df['openPrice']-df['S/L'])*10000
     df['PipTP'] = abs(df['openPrice']-df['T/P'])*10000
     
     return fig
-
     # Retorno de salidas en Diccionario INVESTIGAR

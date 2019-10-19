@@ -5,9 +5,10 @@ Created on Wed Oct 16 21:53:59 2019
 @author: gallardj
 """
 
-import function_json2
-import Anclaje
+import numpy as np
+import pandas as pd
+import function_json2 as fi
+import Anclaje as anc
 
-df = f_datosent(p0_archivo = 'archivo_tradeview_2.xlsx')
-
-test = Anclaje.pareto(df)
+df = fi.f_datosent(p0_archivo = 'archivo_tradeview_2.xlsx')
+test = anc.pareto(df)
