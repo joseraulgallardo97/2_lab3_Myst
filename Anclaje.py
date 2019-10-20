@@ -46,5 +46,21 @@ def pareto(df):
     df['PipSL'] = abs(df['openPrice']-df['S/L'])*10000
     df['PipTP'] = abs(df['openPrice']-df['T/P'])*10000
     
-    return fig
+    # Poniendo 0 donde no hubo un Stop Loss y un Take Profit
+    df.loc[df['S/L'] == 0, 'PipSL'] = 0
+    df.loc[df['T/P'] == 0, 'PipTP'] = 0
+    
+    # Armando un DataFrame con la divida que más se operó
+    fx = df['Symbol'].value_counts().argmax()
+    ndf = df[df['Symbol'] == fx].sort_values(by ='openTime').reset_index().drop(['index'], 1)
+    
+    # Contando los casos donde se cumple que sean la mimsa cantidad de pips
+    cases = len(ndf[(ndf['PipSL'] == df['PipSL'].iloc[0]) & (ndf['PipTP'] == df['PipTP'].iloc[0])])
+    
+    if cases > len(ndf):
+        ses = 'Existe un sesgo de anclaje, se cumplen %d de %d casos' % (cases, len(ndf))
+    else:
+        ses = 'No existe un sesgo de anclaje, se cumplen %d de %d casos' % (cases, len(ndf))
+    
+    return fig, ses
     # Retorno de salidas en Diccionario INVESTIGAR
