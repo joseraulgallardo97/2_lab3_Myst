@@ -5,10 +5,11 @@ Created on Mon Oct 14 08:28:42 2019
 @author: gallardj
 """
 
-def anclaje(df):
+def anclaje(p0_df,p1_n):
     # Grafico pareto para analizar principales divisas transaccionadas
     """
-    :param df dataframe con el historico de transacciones
+    :param p0_df dataframe con el historico de transacciones
+    :param p1_1 transaccion de la cual se empezara a analizar (numero)
     :return grafica
     :return dataframe
     
@@ -19,11 +20,13 @@ def anclaje(df):
     import pandas as pd
     import plotly.graph_objs as go
     from plotly.subplots import make_subplots
+    from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+    import plotly.offline as py
         
     # Construcción del DataFrame a utilizar para el pareto
-    pareto = pd.DataFrame({'Percentage':(df['Symbol'].value_counts()/df['Symbol'].count())*100}) #% de participación
+    pareto = pd.DataFrame({'Percentage':(p0_df['Symbol'].value_counts()/p0_df['Symbol'].count())*100}) #% de participación
     pareto = pareto.sort_values(by='Percentage',ascending=False) #Sort de mayor a menor % para línea
-    pareto['TransactionC'] = list(df['Symbol'].value_counts()) #Conteo de valores para gráfico de barras
+    pareto['TransactionC'] = list(p0_df['Symbol'].value_counts()) #Conteo de valores para gráfico de barras
     
     # Construcción del gráfico
     fig = go.Figure()
@@ -45,23 +48,26 @@ def anclaje(df):
     fig.update_yaxes(title_text='<b>Conteo</b> de transacciones', secondary_y=False)
     fig.update_yaxes(title_text='<b>Porcentaje total</b> de transaccinoes', secondary_y=True)
     
-    fig.show()
+    #fig.show()
+    py.offline.init_notebook_mode(connected=False)
+#    py.iplot(fig, filename='Pareto de transacciones')
     
     # Calculando Pips Stop Loss y Take Profit
     pd.set_option('display.float_format', lambda x: '%.3f' % x)
-    df['PipSL'] = abs(df['openPrice']-df['S/L'])*10000
-    df['PipTP'] = abs(df['openPrice']-df['T/P'])*10000
+    p0_df['PipSL'] = abs(p0_df['openPrice']-p0_df['S/L'])*10000
+    p0_df['PipTP'] = abs(p0_df['openPrice']-p0_df['T/P'])*10000
     
     # Poniendo 0 donde no hubo un Stop Loss y un Take Profit
-    df.loc[df['S/L'] == 0, 'PipSL'] = 0
-    df.loc[df['T/P'] == 0, 'PipTP'] = 0
+    p0_df.loc[p0_df['S/L'] == 0, 'PipSL'] = 0
+    p0_df.loc[p0_df['T/P'] == 0, 'PipTP'] = 0
     
     # Armando un DataFrame con la divida que más se operó
-    fx = df['Symbol'].value_counts().idxmax() # Divisa que más se operó
-    ndf = df[df['Symbol'] == fx].sort_values(by ='openTime').reset_index().drop(['index'], 1) #DataFrame de solo esa divisa
+    fx = p0_df['Symbol'].value_counts().idxmax() # Divisa que más se operó
+    ndf = p0_df[p0_df['Symbol'] == fx].sort_values(by ='openTime').reset_index().drop(['index'], 1) #DataFrame de solo esa divisa
+    ndf = ndf.iloc[p1_n:,:] # Filtrando transacciones de acuerdo a la operacion solicitada
     
     # Contando los casos donde se cumple que sean la mimsa cantidad de pips
-    cases = len(ndf[(ndf['PipSL'] == df['PipSL'].iloc[0]) & (ndf['PipTP'] == df['PipTP'].iloc[0])])
+    cases = len(ndf[(ndf['PipSL'] == ndf['PipSL'].iloc[0]) & (ndf['PipTP'] == ndf['PipTP'].iloc[0])])
     
     # Cumplimiento de sesgo en porcentaje
     rate = (cases/len(ndf))*100
@@ -81,4 +87,4 @@ def anclaje(df):
     df_salida = pd.DataFrame(data)
     
     return {'datos':df_salida, 
-            'grafica' :fig}
+            'grafica': fig}
