@@ -8,7 +8,7 @@ Created on Mon Oct 14 08:28:42 2019
 def pareto(df):
     # Grafico pareto para analizar principales divisas transaccionadas
     """
-    :param tickers: columna de dataframe con los tickers de las divisas
+    :param df dataframe con el historico de transacciones
     :return grafica
     
     debbuging
@@ -57,10 +57,21 @@ def pareto(df):
     # Contando los casos donde se cumple que sean la mimsa cantidad de pips
     cases = len(ndf[(ndf['PipSL'] == df['PipSL'].iloc[0]) & (ndf['PipTP'] == df['PipTP'].iloc[0])])
     
-    if cases > len(ndf):
-        ses = 'Existe un sesgo de anclaje, se cumplen %d de %d casos' % (cases, len(ndf))
-    else:
-        ses = 'No existe un sesgo de anclaje, se cumplen %d de %d casos' % (cases, len(ndf))
+    # Cumplimiento de sesgo en porcentaje
+    rate = (cases/len(ndf))*100
     
-    return fig, ses
+    if rate > 50:
+        sesgo = 'Y'
+    else:
+        sesgo = 'N'
+    
+    data = {'Divisa': [fx],
+            'Total de transacciones': [len(df[df['Symbol'] == fx])],
+            'Transacciones c/mismos pips': [cases],
+            'Cumplimiento del sesgo (%)': [rate],
+            'Sesgo': [sesgo]}
+    
+    df_salida = pd.DataFrame(data)
+    
+    return fig, df_salida
     # Retorno de salidas en Diccionario INVESTIGAR
