@@ -11,4 +11,4 @@ import function_json2 as fi
 import Anclaje as anc
 
 df = fi.f_datosent(p0_archivo = 'archivo_tradeview_2.xlsx')
-graf, df = anc.pareto(df)
+salida = anc.pareto(df)

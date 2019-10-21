@@ -5,14 +5,15 @@ Created on Mon Oct 14 08:28:42 2019
 @author: gallardj
 """
 
-def pareto(df):
+def anclaje(df):
     # Grafico pareto para analizar principales divisas transaccionadas
     """
     :param df dataframe con el historico de transacciones
     :return grafica
+    :return dataframe
     
     debbuging
-    tickers = df
+    data = df
     """
     import numpy as np
     import pandas as pd
@@ -25,9 +26,14 @@ def pareto(df):
     pareto['TransactionC'] = list(df['Symbol'].value_counts()) #Conteo de valores para gráfico de barras
     
     # Construcción del gráfico
-    fig = make_subplots(specs=[[{'secondary_y': True}]])
-    fig.add_trace(go.Bar(x=pareto.index, y=pareto['TransactionC'],name='Conteo'),secondary_y=False)
-    fig.add_trace(go.Scatter(x=pareto.index, y=pareto['Percentage'].cumsum(), name='Porcentaje'),secondary_y=True)
+    fig = go.Figure()
+    fig = make_subplots(specs=[[{'secondary_y': True}]]) #Activar eje secundario para porcentaje
+    fig.add_trace(go.Bar(x=pareto.index, y=pareto['TransactionC'],name='Conteo',
+                         hovertemplate = '<i>Transacciones</i>: %{y}'
+                        '<br><b>Divisa</b>: %{x}<br>'),secondary_y=False)
+    fig.add_trace(go.Scatter(x=pareto.index, y=pareto['Percentage'].cumsum(), name='Porcentaje',
+                              hovertemplate = '<i>Porcentaje de transacción acumulado</i>: %{y}'
+                        '<br><b>Divisa</b>: %{x}<br>'),secondary_y=True)
     
     # Título del gráfico
     fig.update_layout(title_text='Pareto de transacciones')
@@ -51,8 +57,8 @@ def pareto(df):
     df.loc[df['T/P'] == 0, 'PipTP'] = 0
     
     # Armando un DataFrame con la divida que más se operó
-    fx = df['Symbol'].value_counts().argmax()
-    ndf = df[df['Symbol'] == fx].sort_values(by ='openTime').reset_index().drop(['index'], 1)
+    fx = df['Symbol'].value_counts().idxmax() # Divisa que más se operó
+    ndf = df[df['Symbol'] == fx].sort_values(by ='openTime').reset_index().drop(['index'], 1) #DataFrame de solo esa divisa
     
     # Contando los casos donde se cumple que sean la mimsa cantidad de pips
     cases = len(ndf[(ndf['PipSL'] == df['PipSL'].iloc[0]) & (ndf['PipTP'] == df['PipTP'].iloc[0])])
@@ -65,13 +71,14 @@ def pareto(df):
     else:
         sesgo = 'N'
     
-    data = {'Divisa': [fx],
-            'Total de transacciones': [len(df[df['Symbol'] == fx])],
+    # Diccionario para crear el df de salida
+    data = {'Divisa': [fx], 
+            'Total de transacciones': [len(ndf)],
             'Transacciones c/mismos pips': [cases],
             'Cumplimiento del sesgo (%)': [rate],
             'Sesgo': [sesgo]}
     
     df_salida = pd.DataFrame(data)
     
-    return fig, df_salida
-    # Retorno de salidas en Diccionario INVESTIGAR
+    return {'datos':df_salida, 
+            'grafica' :fig}
