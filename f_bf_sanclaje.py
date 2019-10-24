@@ -9,7 +9,7 @@ def anclaje(p0_df,p1_n):
     # Grafico pareto para analizar principales divisas transaccionadas
     """
     :param p0_df dataframe con el historico de transacciones
-    :param p1_1 transaccion de la cual se empezara a analizar (numero)
+    :param p1_1 transaccion de la cual se empezara a analizar (numero). siendo 0 el inicial
     :return grafica
     :return dataframe
     
@@ -46,7 +46,7 @@ def anclaje(p0_df,p1_n):
     
     # Set y-axes titles
     fig.update_yaxes(title_text='<b>Conteo</b> de transacciones', secondary_y=False)
-    fig.update_yaxes(title_text='<b>Porcentaje total</b> de transaccinoes', secondary_y=True)
+    fig.update_yaxes(title_text='<b>Porcentaje total</b> de transacciones', secondary_y=True)
     
     #fig.show()
     py.offline.init_notebook_mode(connected=False)
