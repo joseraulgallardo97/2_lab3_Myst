@@ -4,6 +4,12 @@ Created on Mon Oct 14 08:28:42 2019
 
 @author: gallardj
 """
+import numpy as np
+import pandas as pd
+import plotly.graph_objs as go
+from plotly.subplots import make_subplots
+from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+import plotly.offline as py
 
 def f_bf_anclaje(p0_df,p1_n=0):
     # Grafico pareto para analizar principales divisas transaccionadas
@@ -15,12 +21,7 @@ def f_bf_anclaje(p0_df,p1_n=0):
     debbuging
     data = df
     """
-#     import numpy as np
-#     import pandas as pd
-#     import plotly.graph_objs as go
-#     from plotly.subplots import make_subplots
-#     from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
-#     import plotly.offline as py
+
         
     # Construccion del DataFrame a utilizar para el pareto
     pareto = pd.DataFrame({'Percentage':(p0_df['Symbol'].value_counts()/p0_df['Symbol'].count())*100}) #% de participacion
