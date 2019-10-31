@@ -14,7 +14,7 @@ import plotly.offline as py
 def f_bf_sanclaje(p0_df,p1_n=0):
     # Grafico pareto para analizar principales divisas transaccionadas
     """
-    :param p0_df: dataframe con el historico de transacciones
+    :param p0_df: dataframe columnas {'Order', 'openTime', 'Type', 'Size', 'Symbol', 'openPrice', 'S/L', 'T/P', 'closeTime', 'closePrice',    'Commission', 'Taxes', 'Swap', 'Profit', 'PipSL', 'PipTP'}
     :param p1_1: transaccion de la cual se empezara a analizar (numero), si no se indica un index por default es 0.
     :return: diccionario con 4 llaves (datos, grafica, explicacion y escala)
     
@@ -89,4 +89,4 @@ def f_bf_sanclaje(p0_df,p1_n=0):
     return {'datos':df_salida, 
             'grafica': fig,
             'explicacion': "Anclaje: El sesgo consiste en que el individuo realiza operaciones con la misma divisa y con límites (pips de stop loss y take profit) iguales esperando tener un resultado positivo.",
-            'escala': rate}
+            'escala': {'valor': rate, 'texto':"Sesgo se presentó en " + str(round(rate,3)) + "%"}}
