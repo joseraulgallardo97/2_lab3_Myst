@@ -11,7 +11,7 @@ from plotly.subplots import make_subplots
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 import plotly.offline as py
 
-def f_bf_anclaje(p0_df,p1_n=0):
+def f_bf_sanclaje(p0_df,p1_n=0):
     # Grafico pareto para analizar principales divisas transaccionadas
     """
     :param p0_df: dataframe con el historico de transacciones
